@@ -1,0 +1,662 @@
+/* =========================================================
+   SIBYL — Site stylesheet
+   Oracle/manuscript identity · dark (default) + light theme
+   ========================================================= */
+
+:root {
+  --ink:        #0B1220;
+  --ink-soft:   #0F1A2C;
+  --panel:      #121B2E;
+  --panel-2:    #16223A;
+  --hair:       rgba(201, 166, 97, 0.22);
+  --hair-soft:  rgba(237, 230, 214, 0.10);
+
+  --gold:       #C9A661;
+  --gold-soft:  #E4CE9C;
+  --teal:       #4FA6A0;
+  --teal-soft:  #7FC4BF;
+  --parchment:  #EDE6D6;
+  --parchment-dim: #C9C2AF;
+
+  --text-hi:    #F3EEE2;
+  --text-mid:   #C7C2B3;
+  --text-dim:   #8D93A3;
+
+  --shadow-card: 0 26px 50px -24px rgba(0,0,0,0.6);
+  --danger:     #D98878;
+  --good:       #7FC4BF;
+
+  /* accent = primary action colour, paired with a guaranteed-contrast text colour */
+  --accent:          #C9A661;
+  --accent-contrast: #1B1404;
+  --accent-soft:     #E4CE9C;
+
+  --serif: "Playfair Display", "Iowan Old Style", Georgia, serif;
+  --sans:  "Outfit", "Segoe UI", system-ui, sans-serif;
+
+  --max: 1180px;
+  --pad: clamp(20px, 5vw, 56px);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --ink:        #F7F3EA;
+  --ink-soft:   #F1EBDD;
+  --panel:      #FFFFFF;
+  --panel-2:    #FBF7EE;
+  --hair:       rgba(27, 42, 74, 0.16);
+  --hair-soft:  rgba(27, 35, 51, 0.08);
+
+  --gold:       #8A6A22;
+  --gold-soft:  #6E5419;
+  --teal:       #257A73;
+  --teal-soft:  #1E655F;
+  --parchment:  #1B2333;
+  --parchment-dim: #4B4636;
+
+  --text-hi:    #1B2333;
+  --text-mid:   #4A4C57;
+  --text-dim:   #767A87;
+
+  /* navy accent instead of gold, reads cleaner on a cream background */
+  --accent:          #1B2A4A;
+  --accent-contrast: #F7F3EA;
+  --accent-soft:     #2A3E68;
+
+  --shadow-card: 0 26px 50px -26px rgba(27,42,74,0.38);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--ink);
+  color: var(--text-mid);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); position: relative; }
+
+h1, h2, h3 { font-family: var(--serif); color: var(--text-hi); font-weight: 500; margin: 0; letter-spacing: 0.005em; }
+
+a { color: var(--gold-soft); text-decoration: none; }
+a:hover { color: var(--gold); }
+
+:focus-visible { outline: 2px solid var(--teal-soft); outline-offset: 3px; }
+
+img { max-width: 100%; display: block; }
+
+.icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+/* ---------- shared chrome ---------- */
+.chapter { padding: clamp(64px, 9vw, 110px) 0; border-top: 1px solid var(--hair); position: relative; }
+/* overflow:hidden is scoped to .hero alone (to clip its glow) rather than
+   applied to every .chapter: any ancestor with overflow other than visible
+   silently breaks position:sticky for descendants, which is exactly what
+   was stopping the phone in "Why Sibyl" from staying fixed while scrolling. */
+.chapter.hero { overflow: hidden; }
+
+.section-eyebrow { font-family: var(--serif); font-style: italic; color: var(--teal-soft); font-size: 0.95rem; letter-spacing: 0.03em; margin: 0 0 16px; }
+.chapter-heading { font-size: clamp(1.7rem, 3.2vw, 2.5rem); max-width: 760px; margin-bottom: 18px; }
+.chapter-intro { max-width: 620px; color: var(--text-mid); font-size: 1.02rem; margin-bottom: 40px; }
+
+/* ================= HEADER ================= */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: color-mix(in srgb, var(--ink) 78%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s var(--ease), background .3s var(--ease);
+}
+.site-header.scrolled { border-bottom-color: var(--hair); background: color-mix(in srgb, var(--ink) 94%, transparent); }
+
+.header-row { display: flex; align-items: center; gap: 24px; height: 72px; }
+
+.brand { display: flex; align-items: center; margin-right: auto; position: relative; }
+.brand-logo { display: inline-flex; align-items: center; gap: 6px; height: 46px; position: relative; z-index: 1; }
+.brand-text { height: 19px; width: auto; display: block; }
+/* the pale gold wordmark washes out on cream, so deepen it in light mode */
+:root[data-theme="light"] .brand-text { filter: brightness(0.62) saturate(1.5) contrast(1.1); }
+
+.chapter-nav { display: flex; gap: 26px; }
+.chapter-nav a { font-size: 0.9rem; color: var(--text-mid); white-space: nowrap; padding: 4px 0; border-bottom: 1px solid transparent; }
+.chapter-nav .nav-extra { display: none; }
+.chapter-nav a:hover, .chapter-nav a.active { color: var(--text-hi); border-bottom-color: var(--accent); }
+
+.header-actions { display: flex; align-items: center; gap: 12px; }
+
+.theme-toggle {
+  width: 38px; height: 38px; border-radius: 50%; position: relative;
+  border: 1px solid var(--hair); background: transparent; color: var(--text-hi); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.theme-toggle:hover { border-color: var(--accent); }
+.theme-toggle .icon { width: 17px; height: 17px; position: absolute; transition: opacity .2s, transform .3s; }
+.icon-sun { opacity: 1; transform: rotate(0deg); }
+.icon-moon { opacity: 0; transform: rotate(-40deg); }
+:root[data-theme="light"] .icon-sun { opacity: 0; transform: rotate(40deg); }
+:root[data-theme="light"] .icon-moon { opacity: 1; transform: rotate(0deg); }
+
+.header-cta { font-size: 0.88rem; padding: 9px 18px; }
+
+.nav-toggle { display: none; width: 34px; height: 34px; background: none; border: none; cursor: pointer; flex-direction: column; justify-content: center; gap: 5px; }
+.nav-toggle span { display: block; height: 1px; background: var(--parchment); }
+
+/* ================= BUTTONS ================= */
+.btn {
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 13px 24px; border-radius: var(--radius-sm);
+  font-family: var(--sans); font-size: 0.98rem; font-weight: 500;
+  border: 1px solid transparent; cursor: pointer;
+  transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn .btn-sub { font-size: 0.72rem; font-weight: 400; opacity: 0.75; }
+
+.btn-primary { background: var(--accent); color: var(--accent-contrast); }
+.btn-primary:hover { background: var(--accent-soft); color: var(--accent-contrast); box-shadow: 0 8px 26px -8px color-mix(in srgb, var(--accent) 60%, transparent); }
+
+/* row-style button: icon + single line of text, no stacked sub-label */
+.btn-row { flex-direction: row; align-items: center; gap: 10px; }
+.btn-row .icon { width: 17px; height: 17px; }
+
+.btn-outline {
+  border-color: var(--hair); color: var(--text-hi); background: var(--panel-2);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--text-hi); background: var(--panel); }
+.btn-ghost { border-color: var(--hair); color: var(--text-hi); padding: 9px 18px; }
+.btn-ghost:hover { border-color: var(--accent); color: var(--text-hi); }
+.btn-large { padding: 18px 32px; }
+
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
+  transform: skewX(-20deg);
+  animation: shine 3.2s ease-in-out infinite;
+}
+@keyframes shine { 0%,60% { left: -60%; } 100% { left: 130%; } }
+
+/* ================= HERO ================= */
+.hero { padding-top: clamp(140px, 16vw, 180px); border-top: none; }
+.hero-glow {
+  position: absolute; top: -220px; right: -160px; width: 620px; height: 620px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+.hero-mark { width: 112px; height: 112px; margin-bottom: 26px; }
+.hero-tagline { font-family: var(--serif); font-style: italic; color: var(--gold-soft); font-size: 1.15rem; margin: 0 0 20px; }
+.hero-headline { font-size: clamp(2.2rem, 4.4vw, 3.3rem); line-height: 1.18; max-width: 580px; margin-bottom: 22px; }
+.hero-lede { max-width: 480px; font-size: 1.08rem; color: var(--text-mid); margin-bottom: 34px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-phone-wrap { display: flex; justify-content: center; }
+
+/* ---------- phone mockup ---------- */
+.phone {
+  width: 330px; aspect-ratio: 9 / 19.5; background: #060A13; border-radius: 40px;
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  box-shadow: 0 40px 90px -30px rgba(0,0,0,0.5), 0 0 0 8px rgba(255,255,255,0.02) inset;
+  padding: 8px; position: relative; overflow: hidden;
+}
+.phone-screen { width: 100%; height: 100%; border-radius: 32px; overflow: hidden; position: relative; background: #0B1220; }
+.phone-small { width: 280px; }
+
+/* every slide (real image or placeholder) shares position/transition rules;
+   is-image / is-placeholder decide layout so images never inherit placeholder padding */
+.phone-slide {
+  position: absolute; inset: 0; opacity: 0;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transform: translateX(0);
+}
+.phone-slide.active { opacity: 1; }
+.phone-slide.exit-left { transform: translateX(-14px); }
+.phone-slide.exit-right { transform: translateX(14px); }
+
+.phone-slide.is-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.phone-slide.is-placeholder {
+  width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; padding: 20px; color: var(--text-dim); font-size: 0.78rem;
+  background: linear-gradient(160deg, #16223A, #0B1220);
+}
+.phone-slide.is-placeholder img.ph-mark { width: 30px; height: 30px; opacity: 0.7; margin-bottom: 4px; }
+.phone-slide.is-placeholder strong { display: block; color: var(--parchment-dim); font-family: var(--serif); font-style: italic; font-size: 0.92rem; }
+
+/* ================= PILLARS ================= */
+.pillars { border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: var(--ink-soft); }
+.pillars-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.pillar { padding: 40px 30px; border-right: 1px solid var(--hair); text-align: center; }
+.pillar:last-child { border-right: none; }
+.pillar-value { font-family: var(--serif); font-size: clamp(2.2rem, 3.4vw, 3rem); color: var(--gold-soft); line-height: 1; }
+.pillar-unit { display: block; font-size: 0.82rem; color: var(--teal-soft); margin: 8px 0 14px; letter-spacing: 0.02em; }
+.pillar-label { font-size: 0.92rem; color: var(--text-mid); line-height: 1.55; text-align: justify; text-align-last: center; }
+
+/* ================= DIFFERENCE — phone + radial card arc ================= */
+.orbit-eyebrow-pill {
+  display: inline-flex; align-items: center; font-family: var(--sans); font-size: 0.82rem; font-weight: 500;
+  color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: 999px; padding: 7px 16px; margin-bottom: 20px;
+}
+
+/* tall outer wrapper gives the sticky stage room to run; height is a
+   deliberately generous scroll "runway" so the arc has space to move
+   smoothly through all 9 cards without feeling rushed */
+.orbit-stage-outer { position: relative; min-height: calc(100vh + 2400px); margin-top: 10px; }
+.orbit-stage { position: sticky; top: 110px; display: flex; align-items: center; height: 640px; }
+
+/* phone occupies a fixed left half, centred within it, and never moves —
+   only the card arc beside it animates as the page scrolls */
+.orbit-phone { flex: 0 0 50%; display: flex; justify-content: center; align-items: center; perspective: 1400px; position: relative; }
+.orbit-phone::before {
+  content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--gold) 38%, transparent), transparent 68%);
+  pointer-events: none; z-index: 0;
+}
+.phone-big {
+  width: 280px; position: relative; z-index: 1;
+  transform: rotateY(-8deg) rotateX(2deg); transform-style: preserve-3d;
+  box-shadow: 30px 50px 90px -30px rgba(0,0,0,0.55), 0 0 60px -10px color-mix(in srgb, var(--gold) 45%, transparent);
+}
+
+/* the right half: a fixed-height stage where each card is absolutely
+   positioned and transformed individually every scroll tick (see script.js)
+   to trace a shallow arc that bulges toward the phone at its centre and
+   curves away above/below — matching the reference "half-opening circle" */
+.orbit-arc-stage { flex: 1; position: relative; height: 100%; }
+.orbit-card {
+  position: absolute; top: 50%; left: 0; width: 100%; max-width: 420px;
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--radius);
+  padding: 18px 22px;
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease);
+  will-change: transform, opacity;
+}
+.orbit-card.active { border-color: var(--accent); background: var(--panel-2); box-shadow: 0 16px 34px -16px color-mix(in srgb, var(--accent) 50%, transparent); }
+.orbit-card.active .orbit-card-icon { background: var(--accent); color: var(--accent-contrast); }
+.orbit-card-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.orbit-card-icon { width: 36px; height: 36px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .3s var(--ease), color .3s var(--ease); }
+.orbit-card-num { font-family: var(--serif); font-style: italic; color: var(--teal-soft); font-size: 0.82rem; display: block; }
+.orbit-card-title { font-family: var(--serif); font-size: 1rem; color: var(--text-hi); }
+.orbit-card-typical { font-size: 0.8rem; color: var(--text-dim); margin: 0 0 3px; }
+.orbit-card-sibyl { font-size: 0.85rem; color: var(--text-mid); margin: 0; line-height: 1.45; }
+
+/* flat mobile fallback — hidden on desktop */
+/* mobile/tablet: the phone stays still, only the cards swipe sideways */
+.orbit-mobile { display: none; }
+
+@media (max-width: 1020px) {
+  .orbit-stage-outer { display: none; }
+  .orbit-mobile { display: block; margin-top: 8px; }
+
+  .orbit-mobile-phone { display: flex; justify-content: center; position: relative; margin-bottom: 26px; }
+  .orbit-mobile-phone::before {
+    content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(92vw, 340px); aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--gold) 62%, transparent) 0%, color-mix(in srgb, var(--gold) 30%, transparent) 38%, transparent 70%),
+      conic-gradient(from 200deg, transparent, color-mix(in srgb, var(--gold) 26%, transparent), transparent 40%, color-mix(in srgb, var(--gold) 20%, transparent), transparent);
+    filter: blur(5px);
+  }
+  .phone-mobile { width: 190px; position: relative; z-index: 1; border-radius: 30px; padding: 6px; border-color: color-mix(in srgb, var(--gold) 65%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 46px 2px color-mix(in srgb, var(--gold) 55%, transparent), 0 24px 50px -22px rgba(0,0,0,0.6); }
+  .phone-mobile .phone-screen { border-radius: 24px; }
+
+  .orbit-mobile-track {
+    position: relative; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    margin: 0 calc(var(--pad) * -1); padding: 6px var(--pad) 14px; scrollbar-width: none;
+  }
+  .orbit-mobile-track::-webkit-scrollbar { display: none; }
+  .orbit-mobile-track .orbit-card {
+    position: relative; top: auto; left: auto; width: auto; max-width: none;
+    flex: 0 0 80%; scroll-snap-align: center; opacity: 0.55; transform: scale(0.97);
+    transition: opacity .35s var(--ease), transform .35s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .orbit-mobile-track .orbit-card.active { opacity: 1; transform: none; }
+
+  .orbit-mobile-dots { display: flex; justify-content: center; gap: 7px; margin-top: 4px; }
+  .orbit-dot { width: 7px; height: 7px; padding: 0; border: none; border-radius: 50%; background: var(--hair); cursor: pointer; transition: background .3s var(--ease), transform .3s var(--ease), width .3s var(--ease); }
+  .orbit-dot.active { background: var(--accent); width: 20px; border-radius: 999px; }
+}
+
+/* ================= BENTO FEATURES ================= */
+.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.bento-card {
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--radius);
+  padding: 30px; position: relative; overflow: hidden;
+  transition: border-color .25s var(--ease), transform .25s var(--ease), opacity .25s var(--ease);
+}
+.bento-card.size-large { grid-column: span 2; }
+.bento-card.size-large.has-illustration { display: flex; align-items: center; gap: 28px; padding: 24px 30px; }
+.bento-card.size-large.has-illustration .bento-illustration { flex: 0 0 150px; height: 130px; color: var(--text-dim); }
+.bento-card.size-large.has-illustration .bento-illustration svg { width: 100%; height: 100%; }
+.bento-card.size-large.has-illustration .bento-body { flex: 1; min-width: 0; }
+.illus-teal { stroke: var(--teal-soft); fill: none; stroke-width: 2.2; }
+.illus-accent { stroke: var(--accent); fill: none; stroke-width: 2.2; }
+.bento-card.size-small { grid-column: span 1; }
+.bento-card.size-wide { grid-column: span 3; }
+
+.fg-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.fg-icon { width: 44px; height: 44px; border-radius: 12px; background: color-mix(in srgb, var(--teal) 14%, transparent); color: var(--teal-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform .4s cubic-bezier(.34,1.56,.64,1); }
+.fg-title { font-family: var(--serif); font-size: 1.3rem; color: var(--text-hi); transition: font-size .4s var(--ease); }
+.fg-blurb { color: var(--gold-soft); font-style: italic; font-family: var(--serif); font-size: 0.96rem; margin: 8px 0 20px; }
+
+/* icon + keyword chips, scannable at a glance and wrap naturally
+   (no awkward empty cells from a rigid grid with uneven item counts) */
+.tile-chevron { display: none; }
+.kw-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.kw-item {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--hair-soft); border-radius: 999px; padding: 8px 14px 8px 8px;
+  transition: transform .35s var(--ease), background .3s var(--ease);
+}
+.kw-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--panel-2); color: var(--teal-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform .4s cubic-bezier(.34,1.56,.64,1), background .3s var(--ease), color .3s var(--ease); }
+.kw-icon .icon { width: 14px; height: 14px; }
+.kw-text { font-size: 0.87rem; color: var(--text-mid); line-height: 1.3; font-weight: 500; white-space: nowrap; transition: font-size .35s var(--ease), color .3s var(--ease); }
+
+/* hover-focus: the hovered card grows and lifts with a springy pop; its
+   icons/text scale up individually with a slight overshoot, chips get a
+   staggered little lift, and siblings ease back and dim for contrast */
+@media (hover: hover) and (pointer: fine) {
+@supports selector(:has(*)) {
+  .bento-card { transition: border-color .4s var(--ease), transform .4s var(--ease), opacity .4s var(--ease), box-shadow .4s var(--ease); }
+  .bento:has(.bento-card:hover) .bento-card:not(:hover) { opacity: 0.5; transform: scale(0.95); }
+  .bento-card:hover {
+    transform: scale(1.045) translateY(-4px); border-color: var(--accent); z-index: 2;
+    box-shadow: 0 26px 50px -22px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .bento-card:hover .fg-icon { transform: scale(1.22) rotate(-4deg); }
+  .bento-card:hover .fg-title { font-size: 1.5rem; }
+  .bento-card:hover .kw-item { background: var(--panel-2); transform: translateY(-2px); }
+  .bento-card:hover .kw-icon { transform: scale(1.25) rotate(6deg); background: var(--accent); color: var(--accent-contrast); }
+  .bento-card:hover .kw-text { font-size: 0.95rem; color: var(--text-hi); }
+  .bento-card:hover .bento-illustration { transform: scale(1.06); }
+  .bento-illustration { transition: transform .4s var(--ease); }
+}
+}
+
+/* ================= PRIVACY / VOW — single centred column ================= */
+.vow-panel {
+  position: relative; overflow: hidden; border: 1px solid var(--hair); border-radius: 24px;
+  padding: clamp(32px, 5vw, 64px);
+  background: linear-gradient(165deg, var(--panel), var(--ink-soft) 70%);
+}
+.vow-panel-glow {
+  position: absolute; top: -30%; left: 50%; width: 760px; height: 760px; margin-left: -380px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--teal) 22%, transparent), transparent 62%);
+  pointer-events: none; animation: vowGlow 9s ease-in-out infinite alternate;
+}
+@keyframes vowGlow {
+  from { transform: translate(-40px, 0) scale(0.95); opacity: 0.7; }
+  to   { transform: translate(40px, 30px) scale(1.08); opacity: 1; }
+}
+.vow-stack { position: relative; max-width: 720px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 36px; }
+.vow-head { display: flex; flex-direction: column; align-items: center; }
+.vow-head .chapter-intro { margin: 0 auto 26px; }
+.vow-quote { margin: 0; padding: 0 0 0 0; border-left: none; font-family: var(--serif); font-style: italic; color: var(--parchment); font-size: 1.35rem; line-height: 1.5; max-width: 560px; }
+
+/* scroll-reveal: elements fade and rise into place once, the first time
+   they enter the viewport (class added by IntersectionObserver in script.js) */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal.visible.delay-1 { transition-delay: .12s; }
+.reveal.visible.delay-2 { transition-delay: .24s; }
+
+/* the four points cascade in one after another once the list is revealed */
+.vow-points li { opacity: 0; transform: translateX(-16px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.vow-points.visible li { opacity: 1; transform: none; }
+.vow-points.visible li:nth-child(1) { transition-delay: .15s; }
+.vow-points.visible li:nth-child(2) { transition-delay: .3s; }
+.vow-points.visible li:nth-child(3) { transition-delay: .45s; }
+.vow-points.visible li:nth-child(4) { transition-delay: .6s; }
+
+/* the dashed opt-in line gently pulses to suggest the one permitted path */
+.flow-line-dashed { animation: dashPulse 2.4s ease-in-out infinite; }
+@keyframes dashPulse { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+
+.flow-diagram {
+  width: 100%; display: flex; align-items: center; gap: 22px; padding: 30px 24px; margin: 0;
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--radius);
+}
+.flow-node { flex: 1; background: var(--panel-2); border: 1px solid var(--hair-soft); border-radius: var(--radius-sm); padding: 18px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.flow-node .icon { width: 22px; height: 22px; color: var(--accent); }
+.flow-node strong { font-family: var(--serif); font-size: 0.95rem; color: var(--text-hi); }
+.flow-node span { font-size: 0.76rem; color: var(--text-dim); line-height: 1.4; }
+.flow-groq .icon { color: var(--teal-soft); }
+.flow-device { flex: 0 0 150px; background: var(--panel); border-color: var(--hair); }
+
+.flow-branches { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.flow-branch { display: flex; align-items: center; gap: 10px; }
+.flow-line { flex: 0 0 30px; height: 1px; background: var(--hair); position: relative; }
+.flow-line-dashed { background: none; border-top: 1px dashed var(--teal-soft); }
+.flow-line-blocked { display: flex; align-items: center; justify-content: center; }
+.flow-x { color: var(--danger); font-size: 0.8rem; background: var(--panel); padding: 0 3px; }
+
+.vow-points { width: 100%; list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--hair); border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; text-align: left; }
+.vow-points li { background: var(--ink-soft); padding: 20px 22px; display: flex; gap: 14px; align-items: flex-start; }
+.vow-point-icon { width: 34px; height: 34px; border-radius: 10px; background: color-mix(in srgb, var(--teal) 14%, transparent); color: var(--teal-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.vow-point-icon .icon { width: 16px; height: 16px; }
+.vow-points h4 { margin: 0 0 4px; font-family: var(--serif); font-size: 1rem; color: var(--text-hi); font-weight: 500; }
+.vow-points p { margin: 0; font-size: 0.88rem; color: var(--text-dim); }
+
+/* ================= GET SIBYL — engaging download card ================= */
+.get-card {
+  position: relative; border: 1px solid var(--hair); border-radius: 24px; padding: clamp(32px, 5vw, 56px);
+  background: linear-gradient(160deg, var(--panel), var(--ink-soft)); overflow: hidden; text-align: center;
+}
+.get-card-glow {
+  position: absolute; top: -40%; left: 50%; transform: translateX(-50%); width: 700px; height: 700px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 65%);
+  pointer-events: none;
+}
+.get-card .section-eyebrow, .get-card .chapter-heading, .get-card .chapter-intro { position: relative; }
+.get-card .chapter-heading { margin: 0 auto 18px; }
+.get-card .chapter-intro { margin: 0 auto 32px; }
+.get-cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.get-badges { display: flex; gap: 10px; justify-content: center; margin: 22px 0 0; flex-wrap: wrap; }
+.badge { border: 1px solid var(--hair); border-radius: 999px; padding: 6px 14px; font-size: 0.78rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-soft); }
+
+.get-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 44px 0 0; text-align: left; }
+.get-step { background: var(--panel-2); border: 1px solid var(--hair-soft); border-radius: var(--radius); padding: 22px; position: relative; }
+.get-step-num { font-family: var(--serif); font-style: italic; color: var(--gold-soft); font-size: 1.6rem; line-height: 1; margin-bottom: 10px; display: block; }
+.get-step h4 { margin: 0 0 6px; font-family: var(--serif); font-size: 1.02rem; color: var(--text-hi); font-weight: 500; }
+.get-step p { margin: 0; font-size: 0.86rem; color: var(--text-dim); line-height: 1.5; }
+
+.get-links { list-style: none; margin: 40px 0 0; padding: 0; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.get-links a {
+  display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--hair); border-radius: 999px;
+  padding: 9px 18px; font-size: 0.88rem; color: var(--text-hi); background: var(--panel-2);
+  transition: border-color .2s, color .2s;
+}
+.get-links a:hover { border-color: var(--accent); color: var(--text-hi); }
+.get-links .icon { width: 15px; height: 15px; }
+
+/* ================= CREATOR ================= */
+.creator { padding-top: clamp(50px, 7vw, 80px); padding-bottom: clamp(50px, 7vw, 80px); }
+.creator-card {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 30px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--hair)); border-radius: 20px;
+  padding: clamp(26px, 4vw, 40px); background: linear-gradient(165deg, var(--panel), var(--panel-2));
+  box-shadow: var(--shadow-card);
+}
+.creator-card::before {
+  content: ""; position: absolute; top: 0; left: 12%; right: 12%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: .8;
+}
+.creator-avatar {
+  width: 74px; height: 74px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+  background: var(--panel-2); border: 1px solid var(--hair);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 1.3rem; color: var(--text-hi); font-weight: 600;
+}
+.creator-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.creator-copy h3 { font-size: 1.3rem; margin: 4px 0 10px; }
+.creator-copy p { margin: 0 0 18px; color: var(--text-mid); font-size: 0.96rem; max-width: 560px; line-height: 1.6; }
+.creator-links { display: flex; gap: 12px; flex-wrap: wrap; }
+.creator-link { display: flex; align-items: center; gap: 8px; border: 1px solid var(--hair); border-radius: 999px; padding: 8px 16px; font-size: 0.86rem; color: var(--text-hi); transition: border-color .2s, color .2s; }
+.creator-link:hover { border-color: var(--accent); color: var(--text-hi); }
+.creator-link .icon { width: 15px; height: 15px; }
+
+/* ================= FOOTER ================= */
+.site-footer { border-top: 1px solid var(--hair); padding: 36px 0 46px; }
+.footer-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+.footer-line1 { font-family: var(--serif); font-style: italic; color: var(--parchment-dim); margin: 0 0 6px; }
+.footer-line2 { font-size: 0.82rem; color: var(--text-dim); margin: 0; }
+.footer-links { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; font-size: 0.88rem; }
+
+/* ================= LIGHTBOX ================= */
+.lightbox { position: fixed; inset: 0; background: rgba(6,10,19,0.94); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 200; padding: 40px 20px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-height: 78vh; border-radius: 22px; border: 1px solid var(--hair); }
+.lightbox p { color: var(--text-mid); font-size: 0.92rem; max-width: 420px; text-align: center; }
+.lightbox-close { position: absolute; top: 26px; right: 30px; background: none; border: 1px solid var(--hair); color: var(--text-hi); width: 40px; height: 40px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; line-height: 1; }
+.lightbox-close:hover { border-color: var(--accent); color: var(--text-hi); }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1020px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-phone-wrap { order: -1; margin-bottom: 20px; }
+  .phone { width: 220px; }
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .bento-card.size-large, .bento-card.size-wide { grid-column: span 2; }
+  .pillars-grid { grid-template-columns: repeat(2,1fr); }
+  .pillar:nth-child(2n) { border-right: none; }
+  .pillar:nth-child(3), .pillar:nth-child(4) { border-top: 1px solid var(--hair); }
+  .get-steps { grid-template-columns: 1fr; }
+}
+
+/* Header items (logo + full nav + star button) genuinely don't fit
+   together below ~980px — simplify to the hamburger earlier than the
+   760px breakpoint used for general content stacking below, otherwise
+   tablet widths (760–1020px) would see the nav overflow/wrap badly. */
+@media (max-width: 980px) {
+  .chapter-nav { display: none; }
+  .nav-toggle { display: flex; }
+  .header-cta { display: none; }
+}
+
+@media (max-width: 760px) {
+  /* home: no phone on mobile, buttons go full width for easy tapping */
+  .hero-phone-wrap { display: none; }
+  .hero { padding-top: 112px; }
+  .hero-mark { width: 84px; height: 84px; margin-bottom: 20px; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+  .get-cta-row .btn { width: 100%; }
+
+  /* pillars: a tidy 2 x 2 grid (borders come from the 1020px rules) */
+  .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+  .pillar { padding: 26px 14px; }
+  .pillar-value { font-size: 2rem; }
+  .pillar-unit { margin: 6px 0 10px; font-size: 0.76rem; }
+  .pillar-label { font-size: 0.8rem; line-height: 1.5; hyphens: auto; }
+
+  /* inside the app: compact two-column tiles, tap to reveal keywords */
+  .bento { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .bento-card, .bento-card.size-small { grid-column: span 1; padding: 18px 16px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .bento-card.size-large, .bento-card.size-wide { grid-column: span 2; }
+  .bento-card.open { grid-column: span 2; border-color: var(--accent); }
+  .bento-card:active { transform: scale(0.98); }
+  .bento-card.size-large.has-illustration { display: block; padding: 18px 16px; }
+  .bento-illustration { display: none !important; }
+  .fg-head { flex-wrap: wrap; gap: 10px; position: relative; padding-right: 26px; }
+  .fg-icon { width: 38px; height: 38px; }
+  .fg-title { font-size: 1.02rem; }
+  .fg-blurb { font-size: 0.82rem; margin: 6px 0 0; }
+  .tile-chevron { display: flex; position: absolute; top: 4px; right: 0; color: var(--text-dim); transition: transform .3s var(--ease); }
+  .tile-chevron .icon { width: 18px; height: 18px; }
+  .bento-card.open .tile-chevron { transform: rotate(180deg); }
+  .kw-grid { display: none; margin-top: 14px; }
+  .bento-card.open .kw-grid { display: flex; }
+
+  /* privacy: the diagram reads top to bottom with vertical connectors */
+  .vow-panel { padding: 28px 18px; }
+  .flow-diagram { flex-direction: column; align-items: stretch; gap: 14px; padding: 20px 16px; }
+  .flow-device { flex: none; width: 100%; }
+  .flow-branches { width: 100%; gap: 14px; }
+  .flow-branch { flex-direction: column; align-items: stretch; gap: 6px; }
+  .flow-line { flex: none; width: 1px; height: 22px; margin: 0 auto; }
+  .flow-line-dashed { border-top: none; border-left: 1px dashed var(--teal-soft); }
+  .flow-x { padding: 2px 0; }
+
+  .creator-card { flex-direction: column; text-align: center; gap: 18px; padding: 30px 20px 26px; }
+  .creator-avatar { width: 96px; height: 96px; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 10px 26px -10px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .creator-copy p { margin-left: auto; margin-right: auto; }
+  .creator-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .creator-link { justify-content: center; }
+}
+
+@media (max-width: 980px) {
+  body.menu-open .chapter-nav .nav-extra { display: inline-flex; align-items: center; gap: 8px; color: var(--text-hi); }
+  body.menu-open .chapter-nav {
+    display: flex; flex-direction: column; position: fixed; top: 72px; left: 0; right: 0;
+    background: color-mix(in srgb, var(--ink) 97%, transparent); padding: 20px var(--pad) 30px;
+    border-bottom: 1px solid var(--hair); gap: 16px; z-index: 90;
+  }
+}
+
+
+/* ================= ANIMATED LOGO =================
+   The logo is split into three transparent layers cut from the original
+   artwork by colour (hair / leaf branch / gold ring + face) and stacked
+   exactly on top of each other, so each part can move on its own. */
+.logo-anim { position: relative; display: inline-block; flex: 0 0 auto; border-radius: 50%; isolation: isolate; }
+.logo-sm { width: 44px; height: 44px; }
+.logo-lg { width: 100%; height: 100%; }
+.logo-disc {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 55% 38%, #1F3158, #131F3B 72%);
+  animation: logoGlow 4.6s ease-in-out infinite alternate;
+}
+.logo-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
+/* hair: three overlapping slow motions (swing, drift, skew) so it never repeats exactly */
+.logo-hair {
+  transform-origin: 62% 30%;
+  animation: hairSwing 5.6s ease-in-out infinite alternate, hairDrift 7.9s ease-in-out infinite alternate, hairSkew 4.3s ease-in-out infinite alternate;
+}
+@keyframes hairSwing { from { rotate: -2.4deg; } to { rotate: 2deg; } }
+@keyframes hairDrift { from { translate: -0.7% 0; } to { translate: 0.8% 0.5%; } }
+@keyframes hairSkew  { from { transform: skewX(-3deg); } to { transform: skewX(3.2deg); } }
+
+/* leaf branch: sways from its base and breathes */
+.logo-leaf {
+  transform-origin: 24% 46%;
+  animation: leafSway 3.9s ease-in-out infinite alternate, leafBreathe 5.2s ease-in-out infinite alternate;
+}
+@keyframes leafSway { from { rotate: -3.4deg; } to { rotate: 3deg; } }
+@keyframes leafBreathe { from { scale: 1; } to { scale: 1.025; } }
+
+/* a soft glint that sweeps across the gold lines only */
+.logo-shine {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 244, 210, 0.95) 50%, transparent 60%) 130% 0 / 260% 100% no-repeat;
+  -webkit-mask: url(assets/logo/base.png) center / 100% 100% no-repeat, url(assets/logo/leaf.png) center / 100% 100% no-repeat;
+          mask: url(assets/logo/base.png) center / 100% 100% no-repeat, url(assets/logo/leaf.png) center / 100% 100% no-repeat;
+  animation: logoShine 5.4s ease-in-out infinite;
+}
+@keyframes logoShine { 0% { background-position: 130% 0; } 55%, 100% { background-position: -40% 0; } }
+
+@keyframes logoGlow {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 0%, transparent); }
+  to   { box-shadow: 0 0 18px 2px color-mix(in srgb, var(--gold) 42%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-disc, .logo-hair, .logo-leaf, .logo-shine { animation: none !important; }
+}

@@ -29,8 +29,8 @@ window.SIBYL_DATA = {
 		// it safely falls back to the release page itself.
 		apkDirectUrl: '',
 		releasesTagUrl:
-			'https://github.com/MettaSurendhar/sibyl/releases/tag/v1.0.0',
-		releasesUrl: 'https://github.com/MettaSurendhar/sibyl/releases',
+			'https://github.com/MettaSurendhar/sibyl/releases/download/v1.0.0/Sibyl-v1.0.0.apk',
+		releasesUrl: 'https://github.com/MettaSurendhar/sibyl/releases/download/v1.0.0/Sibyl-v1.0.0.apk',
 		issuesUrl: 'https://github.com/MettaSurendhar/sibyl/issues',
 		version: 'v1.0.0',
 		arch: 'arm64-v8a',
@@ -439,7 +439,7 @@ window.SIBYL_DATA = {
 			{ label: 'GitHub', url: 'https://github.com/MettaSurendhar/sibyl' },
 			{
 				label: 'Releases',
-				url: 'https://github.com/MettaSurendhar/sibyl/releases',
+				url: 'https://github.com/MettaSurendhar/sibyl/releases/download/v1.0.0/Sibyl-v1.0.0.apk',
 			},
 			{
 				label: 'Issues',
